@@ -16,7 +16,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
     <div
       className={cn(
         'group relative mb-4 flex w-full items-start', // makes the container take full width
-        message.role === 'user' ? 'flex-row-reverse' : 'flex-row' // user messages on the right, AI on the left
+        message.role === 'user' ? 'flex-row-reverse justify-end' : 'flex-row' // user messages on the right, AI on the left
       )}
       {...props}
     >
