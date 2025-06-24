@@ -28,8 +28,8 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
         )}
       >
         {/* Display label based on message role */}
-        <div className="font-semibold text-sm">
-          {message.role === 'user' ? 'You:' : 'AI:'}
+        <div className="font-semibold text-sm mb-2">
+          {message.role === 'user' ? 'You:' : 'CODEX-IQ:'}
         </div>
 
         {/* Render the markdown content */}
