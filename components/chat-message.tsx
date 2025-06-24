@@ -20,13 +20,19 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
       )}
       {...props}
     >
-      {/* Icon container (removed as per previous request) */}
+      {/* Render label "You:" or "AI:" */}
       <div
         className={cn(
           'flex-1 space-y-2 overflow-hidden px-1',
           message.role === 'user' ? 'mr-4' : 'ml-4' // Adjust margin for user to align right
         )}
       >
+        {/* Display label based on message role */}
+        <div className="font-semibold text-sm">
+          {message.role === 'user' ? 'You:' : 'AI:'}
+        </div>
+
+        {/* Render the markdown content */}
         <MemoizedReactMarkdown
           className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
           remarkPlugins={[remarkGfm, remarkMath]}
