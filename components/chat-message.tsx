@@ -20,16 +20,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
       )}
       {...props}
     >
-      <div
-        className={cn(
-          'flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow',
-          message.role === 'user'
-            ? 'bg-background'
-            : 'bg-primary text-primary-foreground'
-        )}
-      >
-        {/* Removed IconUser and IconOpenAI */}
-      </div>
+      {/* Icon container (removed as per previous request) */}
       <div
         className={cn(
           'flex-1 space-y-2 overflow-hidden px-1',
