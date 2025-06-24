@@ -16,15 +16,15 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
     <div
       className={cn(
         'group relative mb-4 flex w-full items-start', // makes the container take full width
-        message.role === 'user' ? 'flex-row-reverse justify-end' : 'flex-row' // user messages on the right, AI on the left
+        'flex-row' // both AI and user messages on the left
       )}
       {...props}
     >
-      {/* Render label "You:" or "AI:" */}
+      {/* Render label "You:" or "CODEX-IQ:" */}
       <div
         className={cn(
           'flex-1 space-y-2 overflow-hidden px-1',
-          message.role === 'user' ? 'mr-4' : 'ml-4' // Adjust margin for user to align right
+          message.role === 'user' ? 'ml-4' : 'ml-4' // Both messages have the same left margin
         )}
       >
         {/* Display label based on message role */}
