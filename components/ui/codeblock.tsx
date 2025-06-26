@@ -41,11 +41,10 @@ export const programmingLanguages: languageMap = {
   sql: '.sql',
   html: '.html',
   css: '.css'
-  // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 }
 
 export const generateRandomString = (length: number, lowercase = false) => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789' // excluding similar looking characters like Z, 2, I, 1, O, 0
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXY3456789'
   let result = ''
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
@@ -57,20 +56,13 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 })
 
   const downloadAsFile = () => {
-    if (typeof window === 'undefined') {
-      return
-    }
+    if (typeof window === 'undefined') return
+
     const fileExtension = programmingLanguages[language] || '.file'
-    const suggestedFileName = `file-${generateRandomString(
-      3,
-      true
-    )}${fileExtension}`
+    const suggestedFileName = `file-${generateRandomString(3, true)}${fileExtension}`
     const fileName = window.prompt('Enter file name' || '', suggestedFileName)
 
-    if (!fileName) {
-      // User pressed cancel on prompt.
-      return
-    }
+    if (!fileName) return
 
     const blob = new Blob([value], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
@@ -90,9 +82,9 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
   }
 
   return (
-    <div className="codeblock relative w-full bg-zinc-950 font-sans">
-      <div className="flex w-full items-center justify-between bg-zinc-800 px-6 py-2 pr-4 text-zinc-100">
-        <span className="text-xs lowercase">{language}</span>
+    <div className="codeblock relative w-full bg-zinc-950 font-sans rounded-xl overflow-hidden p-4">
+      <div className="flex w-full items-center justify-between bg-zinc-800 px-6 py-3 text-zinc-100 rounded-t-xl">
+        <span className="text-sm lowercase">{language}</span>
         <div className="flex items-center space-x-1">
           <Button
             variant="ghost"
@@ -106,7 +98,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
           <Button
             variant="ghost"
             size="icon"
-            className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
+            className="hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
             onClick={onCopy}
           >
             {isCopied ? <IconCheck /> : <IconCopy />}
@@ -114,26 +106,30 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
           </Button>
         </div>
       </div>
-      <SyntaxHighlighter
-        language={language}
-        style={coldarkDark}
-        PreTag="div"
-        showLineNumbers
-        customStyle={{
-          margin: 0,
-          width: '100%',
-          background: 'transparent',
-          padding: '1.5rem 1rem'
-        }}
-        codeTagProps={{
-          style: {
-            fontSize: '0.9rem',
-            fontFamily: 'var(--font-mono)'
-          }
-        }}
-      >
-        {value}
-      </SyntaxHighlighter>
+      <div className="overflow-auto max-h-[600px]">
+        <SyntaxHighlighter
+          language={language}
+          style={coldarkDark}
+          PreTag="div"
+          showLineNumbers
+          customStyle={{
+            margin: 0,
+            width: '100%',
+            background: 'transparent',
+            padding: '2rem',
+            minHeight: '300px'
+          }}
+          codeTagProps={{
+            style: {
+              fontSize: '1rem',
+              fontFamily: 'var(--font-mono)',
+              lineHeight: '1.75rem'
+            }
+          }}
+        >
+          {value}
+        </SyntaxHighlighter>
+      </div>
     </div>
   )
 })
