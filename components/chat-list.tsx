@@ -66,7 +66,7 @@ export function ChatList({ messages, isLoading }: ChatListProps) {
 
       {isLoading && (
         <div className="text-sm text-gray-500 mt-2 ml-2 animate-pulse">
-          Assistant is typing{typingDots}
+          Codex-IQ is typing{typingDots}
         </div>
       )}
     </div>
