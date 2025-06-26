@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { type Message } from 'ai'
-
 import { Separator } from '@/components/ui/separator'
 import { ChatMessage } from '@/components/chat-message'
 
@@ -18,11 +17,11 @@ export function ChatList({ messages, isLoading }: ChatListProps) {
   const lastMessage = messages[messages.length - 1]
   const isAssistantTyping = isLoading && lastMessage?.role === 'assistant'
 
-  // Typing animation for assistant message
+  // Typing animation logic
   useEffect(() => {
     if (isAssistantTyping && lastMessage?.content) {
-      setAnimatedText('')
       let i = 0
+      setAnimatedText('')
       const interval = setInterval(() => {
         setAnimatedText(lastMessage.content.slice(0, i + 1))
         i++
@@ -30,11 +29,11 @@ export function ChatList({ messages, isLoading }: ChatListProps) {
       }, 20)
       return () => clearInterval(interval)
     } else {
-      setAnimatedText(lastMessage?.content || '')
+      setAnimatedText('')
     }
   }, [lastMessage?.content, isAssistantTyping])
 
-  // Dots animation for "Typing..."
+  // Typing dots animation
   useEffect(() => {
     if (!isLoading) return
     const dotInterval = setInterval(() => {
@@ -49,14 +48,15 @@ export function ChatList({ messages, isLoading }: ChatListProps) {
     <div className="relative mx-auto max-w-5xl px-4">
       {messages.map((message, index) => {
         const isLast = index === messages.length - 1
+        const isTyping = isLast && isAssistantTyping
 
         return (
           <div key={index}>
-            {isLast && isAssistantTyping ? (
-              <ChatMessage message={{ ...message, content: animatedText }} />
-            ) : (
-              <ChatMessage message={message} />
-            )}
+            <ChatMessage
+              message={message}
+              isTyping={isTyping}
+              partialContent={isTyping ? animatedText : ''}
+            />
             {index < messages.length - 1 && (
               <Separator className="my-4 md:my-8" />
             )}
