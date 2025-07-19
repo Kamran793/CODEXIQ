@@ -6,7 +6,12 @@ import { Database } from '@/lib/db_types'
 import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
 
-const OPENROUTER_API_KEY = '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' // TODO: Move to Vercel environment variable
+// Use environment variable for OpenRouter API key
+// Note: process.env is not available in the Next.js edge runtime. For edge runtime, use (globalThis as any).process?.env or set the variable at build time in Vercel.
+const OPENROUTER_API_KEY = ((globalThis as any).process?.env?.OPENROUTER_API_KEY as string | undefined)
+if (!OPENROUTER_API_KEY) {
+  throw new Error('CODEX-IQ API KEY IS MISSING')
+}
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 export const runtime = 'edge'
