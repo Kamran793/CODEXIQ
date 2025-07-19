@@ -104,23 +104,27 @@ export async function getSharedChat(id: string) {
   return (data?.payload as Chat) ?? null
 }
 
-export async function shareChat(chat: Chat) {
-  const payload = {
-    ...chat,
-    sharePath: `/share/${chat.id}`
+export async function shareChat(chat: Chat): Promise<Chat | { error: string }> {
+  try {
+    const payload = {
+      ...chat,
+      sharePath: `/share/${chat.id}`
+    }
+
+    const cookieStore = cookies()
+    const supabase = createServerActionClient<Database>({
+      cookies: () => cookieStore
+    })
+    await supabase
+      .from('chats')
+      .update({ payload: payload as any })
+      .eq('id', chat.id)
+      .throwOnError()
+
+    return payload
+  } catch (error) {
+    return { error: 'Failed to share chat' }
   }
-
-  const cookieStore = cookies()
-  const supabase = createServerActionClient<Database>({
-    cookies: () => cookieStore
-  })
-  await supabase
-    .from('chats')
-    .update({ payload: payload as any })
-    .eq('id', chat.id)
-    .throwOnError()
-
-  return payload
 }
 
 export async function renameChat({ id, title }: { id: string; title: string }) {
