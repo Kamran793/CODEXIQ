@@ -6,7 +6,8 @@ import { Database } from '@/lib/db_types'
 import { auth } from '@/auth'
 import { nanoid } from '@/lib/utils'
 
-const SPACE_URL = 'https://mirxakamran893-LOGIQCURVECODE.hf.space/chat'
+const OPENROUTER_API_KEY = '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' // TODO: Move to Vercel environment variable
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 export const runtime = 'edge'
 
@@ -46,29 +47,43 @@ export async function POST(req: Request) {
   const timeout = setTimeout(() => controller.abort(), 60000) // Set 60 seconds timeout
 
   try {
-    const res = await fetch(SPACE_URL, {
+    // Prepare OpenRouter API request
+    const openRouterRes = await fetch(OPENROUTER_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        message: messageContents, // Send the current user message
-        history, // Send the conversation history (empty in this case)
+        model: 'mistralai/mistral-7b-instruct:free', // Hardcoded model for OpenRouter
+        messages: [
+          { role: 'user', content: messageContents }
+        ]
       }),
       signal: controller.signal
     })
 
     clearTimeout(timeout)
 
-    if (!res.ok || !res.body) {
-      const errText = await res.text().catch(() => '')
-      console.error(`❌ HF error ${res.status}:`, errText)
-      return new Response(`🤖 Error ${res.status}: HF Space failed.`, {
-        status: res.status,
+    if (!openRouterRes.ok || !openRouterRes.body) {
+      const errText = await openRouterRes.text().catch(() => '')
+      // Check for daily limit exceeded in error text
+      if (errText && errText.toLowerCase().includes('daily limit')) {
+        return new Response('CODEX-IQ: You Consumed your daily limit buy pro or wait 24 hours', {
+          status: 429,
+          headers: { 'Content-Type': 'text/plain' }
+        })
+      }
+      console.error(`❌ OpenRouter error ${openRouterRes.status}:`, errText)
+      return new Response(`🤖 Error ${openRouterRes.status}: OpenRouter API failed.`, {
+        status: openRouterRes.status,
         headers: { 'Content-Type': 'text/plain' }
       })
     }
 
-    const data = await res.json().catch(() => ({}))
-    const reply = data?.response || '⚠️ No valid response received.'
+    const data = await openRouterRes.json().catch(() => ({}))
+    // OpenRouter returns choices[0].message.content
+    const reply = data?.choices?.[0]?.message?.content || '⚠️ No valid response received.'
 
     // Save chat into the database
     const title = messageContents.substring(0, 100)
@@ -100,8 +115,16 @@ export async function POST(req: Request) {
   } catch (err: any) {
     const isTimeout = err.name === 'AbortError'
     const message = isTimeout
-      ? '⌛ Timeout: Hugging Face Space took too long to respond.'
+      ? '⌛ Timeout: OpenRouter took too long to respond.'
       : `❌ Unexpected error: ${err.message || 'unknown'}`
+
+    // Check for daily limit exceeded in error message
+    if (err.message && err.message.toLowerCase().includes('daily limit')) {
+      return new Response('CODEX-IQ: You Consumed your daily limit buy pro or wait 24 hours', {
+        status: 429,
+        headers: { 'Content-Type': 'text/plain' }
+      })
+    }
 
     return new Response(message, {
       status: isTimeout ? 504 : 500,
