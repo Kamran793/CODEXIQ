@@ -11,8 +11,8 @@ import { Header } from '@/components/header'
 
 export const metadata: Metadata = {
   title: {
-    default: 'CodexIQ By LogIQ Curve LLC',
-    template: `%s - Next.js AI Chatbot`
+    default: 'Codex-IQ By LogIQ Curve LLC',
+    template: `Codex-IQ By LogIQ Curve LLC`
   },
   description: 'An AI Model built with Logiq Curve LLC.',
   themeColor: [
