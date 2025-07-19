@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'moonshotai/kimi-dev-72b:free', // Hardcoded model for OpenRouter
+        model: 'qwen/qwen-2.5-coder-32b-instruct:free', // Hardcoded model for OpenRouter
         messages: [
           { role: 'user', content: messageContents }
         ]
