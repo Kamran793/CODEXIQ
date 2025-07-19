@@ -62,32 +62,12 @@ export function ChatPanel({
         </div>
         <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
           <PromptForm
-            onSubmit={async (value, file) => {
-              if (file) {
-                const formData = new FormData();
-                formData.append('prompt', value);
-                formData.append('file', file);
-                const res = await fetch('/api/chat/upload', {
-                  method: 'POST',
-                  body: formData
-                });
-                if (!res.ok) {
-                  // Optionally handle error
-                  return;
-                }
-                const data = await res.json();
-                await append({
-                  id,
-                  content: data.response || 'No response',
-                  role: 'assistant'
-                });
-              } else {
-                await append({
-                  id,
-                  content: value,
-                  role: 'user'
-                });
-              }
+            onSubmit={async value => {
+              await append({
+                id,
+                content: value,
+                role: 'user'
+              })
             }}
             input={input}
             setInput={setInput}
