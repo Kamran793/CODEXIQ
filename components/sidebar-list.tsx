@@ -34,18 +34,21 @@ export function SidebarList({ userId }: SidebarListProps) {
     fetchChats()
   }, [userId])
 
-  // Dummy handlers (replace with actual logic as needed)
-  const removeChat = (id: string) => {
+  // ✅ Proper function signatures to match SidebarActions props
+  const removeChat = async ({ id, path }: { id: string; path: string }) => {
+    // Optionally delete from Supabase if needed
     setChats(prev => prev.filter(chat => chat.id !== id))
   }
 
-  const shareChat = (id: string) => {
-    alert(`Sharing chat: ${id}`)
+  const shareChat = async ({ id, path }: { id: string; path: string }) => {
+    alert(`Shared chat ID: ${id}, path: ${path}`)
   }
 
-  const renameChat = (id: string, newTitle: string) => {
+  const renameChat = async ({ id, newTitle }: { id: string; newTitle: string }) => {
     setChats(prev =>
-      prev.map(chat => (chat.id === id ? { ...chat, title: newTitle } : chat))
+      prev.map(chat =>
+        chat.id === id ? { ...chat, title: newTitle } : chat
+      )
     )
   }
 
