@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-coder-32b-instruct:free', // Hardcoded model for OpenRouter
+        model: 'google/gemma-3n-e2b-it:free', // Hardcoded model for OpenRouter
         messages: [
           { role: 'user', content: messageContents }
         ]
